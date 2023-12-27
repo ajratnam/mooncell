@@ -27,9 +27,16 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
         i18n.getHeader().setTitle("Mooncell");
         i18n.getHeader().setDescription("Login using user/user or admin/admin");
         i18n.setAdditionalInformation(null);
+//        i18n.setForm(new LoginI18n.Form());
+        i18n.getForm().setForgotPassword("Don't have an account? Sign Up");
         setI18n(i18n);
 
-        setForgotPasswordButtonVisible(false);
+        setForgotPasswordButtonVisible(true);
+        addForgotPasswordListener(e -> {
+            // Navigate to the sign up page
+            getUI().ifPresent(ui -> ui.navigate("signup"));
+        });
+
         setOpened(true);
     }
 
