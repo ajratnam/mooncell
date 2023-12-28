@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Bean;
  *
  */
 @SpringBootApplication
-@Theme(value = "mooncell")
+@Theme(value = "mooncell", variant = "dark")
 @Push
 public class Application implements AppShellConfigurator {
 
