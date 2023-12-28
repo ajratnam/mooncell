@@ -43,6 +43,7 @@ public class SignUpView extends LoginOverlay implements BeforeEnterObserver {
         i18n.getForm().setSubmit("Sign Up");
         i18n.getForm().setForgotPassword("Already have an account? Login");
         i18n.setAdditionalInformation(null);
+        addLoginListener(e -> {onSignUp(e);});
 
         setForgotPasswordButtonVisible(true);
         addForgotPasswordListener(e -> {
@@ -50,11 +51,10 @@ public class SignUpView extends LoginOverlay implements BeforeEnterObserver {
         });
 
         setI18n(i18n);
-
         setOpened(true);
     }
 
-    public void onSignUp(SignUpEvent event) {
+    public void onSignUp(LoginEvent event) {
         String username = event.getUsername();
         String password = event.getPassword();
 
@@ -63,10 +63,10 @@ public class SignUpView extends LoginOverlay implements BeforeEnterObserver {
             Notification.show("Please fill in all fields");
         } else {
             // Check if the username already exists
-            if (userRepository.findByUsername(username) != null) {
-                Notification.show("Username already exists");
-                return;
-            }
+//            if (userRepository.findByUsername(username) != null) {
+//                Notification.show("Username already exists");
+//                return;
+//            }
 
             // Create a new user and save it to the database
             User user = new User();
