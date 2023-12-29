@@ -3,19 +3,14 @@ package com.cats.mooncell.views.signup;
 import com.cats.mooncell.data.User;
 import com.cats.mooncell.data.UserRepository; // import UserRepository from com.cats.mooncell.data
 import com.cats.mooncell.security.AuthenticatedUser;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.internal.RouteUtil;
-import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -31,7 +26,6 @@ public class SignUpView extends LoginOverlay implements BeforeEnterObserver {
         this.authenticatedUser = authenticatedUser;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        setAction(RouteUtil.getRoutePath(VaadinService.getCurrent().getContext(), getClass()));
 
         LoginI18n i18n = LoginI18n.createDefault();
         i18n.setHeader(new LoginI18n.Header());
@@ -65,20 +59,19 @@ public class SignUpView extends LoginOverlay implements BeforeEnterObserver {
             try {
                 userRepository.findByUsername(username);
                 Notification.show("Username already exists");
-                return;
+                setEnabled(true);
             } catch (Exception e) {
-                // Ignore
+                User user = new User();
+                user.setUsername(username);
+                user.setHashedPassword(passwordEncoder.encode(password));
+                userRepository.save(user);
+
+                Notification.show("User created successfully");
+                UI.getCurrent().navigate("login");
             }
-
-            // Create a new user and save it to the database
-            User user = new User();
-            user.setUsername(username);
-            user.setHashedPassword(passwordEncoder.encode(password));
-            userRepository.save(user);
-
-            Notification.show("User created successfully");
         }
     }
+
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
