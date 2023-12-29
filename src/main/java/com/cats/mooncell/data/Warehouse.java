@@ -12,10 +12,16 @@ public class Warehouse extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private  Customer customer;
+    private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "item_code", referencedColumnName = "id")
+    private Item item;
 
     private double cost;
     private int units;
+
+    private int order_number;
 
     public double getCost() {
         return cost;
@@ -33,14 +39,12 @@ public class Warehouse extends AbstractEntity {
         this.units = units;
     }
 
-    public int getOrder_line() {
-        return order_line;
+    public int getOrderNumber() {
+        return order_number;
     }
 
-    public void setOrder_line(int order_line) {
-        this.order_line = order_line;
+    public void setOrderNumber(int orderNumber) {
+        this.order_number = orderNumber;
     }
-
-    private int order_line;
 
 }
