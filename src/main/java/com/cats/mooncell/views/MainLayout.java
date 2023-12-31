@@ -102,7 +102,6 @@ public class MainLayout extends AppLayout {
         if (accessChecker.hasAccess(CreditCardFormView.class)) {
             nav.addItem(new SideNavItem("Credit Card Form", CreditCardFormView.class,
                     LineAwesomeIcon.CREDIT_CARD.create()));
-
         }
         if (accessChecker.hasAccess(AddressFormView.class)) {
             nav.addItem(
