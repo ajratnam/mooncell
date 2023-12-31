@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface WarehouseCodeRepository extends JpaRepository<WarehouseCode,Long>,
         JpaSpecificationExecutor<WarehouseCode> {
+    public  WarehouseCode findById();
+//    public WarehouseCode s
 }
