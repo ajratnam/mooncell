@@ -5,6 +5,14 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "warehouses")
 public class Warehouse extends AbstractEntity {
+    public Warehouse(WarehouseCode warehouseCode, Customer customer, Item item, double cost, int units, int order_number) {
+        this.warehouseCode = warehouseCode;
+        this.customer = customer;
+        this.item = item;
+        this.cost = cost;
+        this.units = units;
+        this.orderNumber = order_number;
+    }
 
     @ManyToOne
     @JoinColumn(name = "warehouse_id", referencedColumnName = "id")
@@ -21,7 +29,11 @@ public class Warehouse extends AbstractEntity {
     private double cost;
     private int units;
 
-    private int order_number;
+    private int orderNumber;
+
+    public Warehouse() {
+
+    }
 
     public double getCost() {
         return cost;
@@ -40,11 +52,11 @@ public class Warehouse extends AbstractEntity {
     }
 
     public int getOrderNumber() {
-        return order_number;
+        return orderNumber;
     }
 
     public void setOrderNumber(int orderNumber) {
-        this.order_number = orderNumber;
+        this.orderNumber = orderNumber;
     }
 
 }
