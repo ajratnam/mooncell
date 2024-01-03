@@ -12,6 +12,7 @@ import com.cats.mooncell.views.imagegallery.ImageGalleryView;
 import com.cats.mooncell.views.masterdetail.MasterDetailView;
 import com.cats.mooncell.views.myview.MyViewView;
 import com.cats.mooncell.views.personform.PersonFormView;
+import com.cats.mooncell.views.warehousemaster.WarehouseMaster;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -42,8 +43,8 @@ public class MainLayout extends AppLayout {
 
     private H2 viewTitle;
 
-    private AuthenticatedUser authenticatedUser;
-    private AccessAnnotationChecker accessChecker;
+    private final AuthenticatedUser authenticatedUser;
+    private final AccessAnnotationChecker accessChecker;
 
     public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker) {
         this.authenticatedUser = authenticatedUser;
@@ -83,6 +84,11 @@ public class MainLayout extends AppLayout {
         }
         if (accessChecker.hasAccess(GridwithFiltersView.class)) {
             nav.addItem(new SideNavItem("Grid with Filters", GridwithFiltersView.class,
+                    LineAwesomeIcon.FILTER_SOLID.create()));
+
+        }
+        if (accessChecker.hasAccess(WarehouseMaster.class)) {
+            nav.addItem(new SideNavItem("Warehouse Master", WarehouseMaster.class,
                     LineAwesomeIcon.FILTER_SOLID.create()));
 
         }
