@@ -9,6 +9,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -16,7 +19,7 @@ import java.util.Set;
 public class User extends AbstractEntity {
 
     private String username;
-    private String name;
+
     @JsonIgnore
     private String hashedPassword;
     @Enumerated(EnumType.STRING)
@@ -27,9 +30,66 @@ public class User extends AbstractEntity {
     private byte[] profilePicture;
 
 
-    private String address;
-    private String phone;
+    private String name;
     private String email;
+    private String phone;
+    private LocalDate birthday;
+    private String role;
+    private String country;
+    private String address;
+    private String postalCode;
+    private String city;
+    private String state;
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+
     public String getAddress() {
         return address;
     }
