@@ -59,4 +59,16 @@ public class Warehouse extends AbstractEntity {
         this.orderNumber = orderNumber;
     }
 
+    public long getCustomerName(){return customer.getId();}
+
+    public void setCustomerName(){}
+
+    public long getItemName(){return item.getId();}
+
+    public void setItemName(){}
+
+    public long getWarehouseName(){return getId();}
+
+    public void setWarehouseName(){}
+
 }
