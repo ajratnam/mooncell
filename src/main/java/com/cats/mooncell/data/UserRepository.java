@@ -10,5 +10,5 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     User findByUsername(String username);
 
-    void updateByUsername(String username, String address, String city, String state, String postalCode, String country, String phone, String email, String name, String role, LocalDate birthday);
+//    void updateByUsername(String username, String address, String city, String state, String postalCode, String country, String phone, String email, String name, String role, LocalDate birthday);
 }

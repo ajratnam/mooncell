@@ -6,12 +6,15 @@ import com.cats.mooncell.views.about.AboutView;
 import com.cats.mooncell.views.addressform.AddressFormView;
 import com.cats.mooncell.views.chat.ChatView;
 import com.cats.mooncell.views.checkoutform.CheckoutFormView;
+import com.cats.mooncell.views.confirmorder.ConfirmOrderView;
 import com.cats.mooncell.views.creditcardform.CreditCardFormView;
 import com.cats.mooncell.views.gridwithfilters.GridwithFiltersView;
 import com.cats.mooncell.views.imagegallery.ImageGalleryView;
+import com.cats.mooncell.views.makeorders.MakeOrdersView;
 import com.cats.mooncell.views.masterdetail.MasterDetailView;
 import com.cats.mooncell.views.myview.MyViewView;
 import com.cats.mooncell.views.personform.PersonFormView;
+import com.cats.mooncell.views.vieworders.ViewOrdersView;
 import com.cats.mooncell.views.warehousemaster.WarehouseMaster;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -108,6 +111,21 @@ public class MainLayout extends AppLayout {
         if (accessChecker.hasAccess(CreditCardFormView.class)) {
             nav.addItem(new SideNavItem("Credit Card Form", CreditCardFormView.class,
                     LineAwesomeIcon.CREDIT_CARD.create()));
+        }
+        if (accessChecker.hasAccess(MakeOrdersView.class)) {
+            nav.addItem(
+                    new SideNavItem("Make Orders", MakeOrdersView.class, LineAwesomeIcon.SHOPPING_CART_SOLID.create()));
+
+        }
+        if (accessChecker.hasAccess(ViewOrdersView.class)) {
+            nav.addItem(
+                    new SideNavItem("View Orders", ViewOrdersView.class, LineAwesomeIcon.PIZZA_SLICE_SOLID.create()));
+
+        }
+        if (accessChecker.hasAccess(ConfirmOrderView.class)) {
+            nav.addItem(new SideNavItem("Confirm Order", ConfirmOrderView.class,
+                    LineAwesomeIcon.MONEY_BILL_WAVE_SOLID.create()));
+
         }
         if (accessChecker.hasAccess(AddressFormView.class)) {
             nav.addItem(
