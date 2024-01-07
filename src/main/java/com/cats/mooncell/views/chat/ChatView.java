@@ -1,4 +1,6 @@
 package com.cats.mooncell.views.chat;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.collaborationengine.CollaborationAvatarGroup;
@@ -31,12 +33,24 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Overflow;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import com.vaadin.flow.theme.lumo.LumoUtility.Width;
 import jakarta.annotation.security.RolesAllowed;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.combobox.ComboBox;
 import java.util.UUID;
 
 @PageTitle("Chat")
 @Route(value = "chat", layout = MainLayout.class)
 @RolesAllowed("USER")
 public class ChatView extends HorizontalLayout {
+    private TextField newChannelNameInput;
+    private Button createChannelButton;
+    private CollaborationMessageList list;
+    private ComboBox<String> userSelection;
+    private TextField addUserField;
+    private List<String> users = new ArrayList<>();
+    private UserInfo userInfo;
+
 
     public static class ChatTab extends Tab {
         private final ChatInfo chatInfo;
@@ -90,22 +104,74 @@ public class ChatView extends HorizontalLayout {
     private ChatInfo currentChat = chats[0];
     private Tabs tabs;
 
+    public void createNewChannel() {
+
+        String newChannelName = newChannelNameInput.getValue();
+        if (newChannelName != null && !newChannelName.isEmpty()) {
+            ChatInfo newChat = new ChatInfo(newChannelName, 0);
+            ChatTab newTab = createTab(newChat);
+
+            // Add a new message manager for the new channel
+            MessageManager mm = new MessageManager(this, userInfo, newChat.getCollaborationTopic());
+            mm.setMessageHandler(context -> {
+                if (currentChat != newChat) {
+                    newChat.incrementUnread();
+                }
+            });
+
+
+            tabs.add(newTab);
+
+
+            tabs.setSelectedTab(newTab);
+            currentChat = newChat;
+            currentChat.resetUnread();
+
+
+            list.setTopic(newChat.getCollaborationTopic());
+
+
+            newChannelNameInput.clear();
+        } else {
+            Notification.show("Please enter a valid channel name");
+        }
+    }
+
+    private void switchUser(String selectedUser) {
+
+        userInfo = new UserInfo(UUID.randomUUID().toString(), selectedUser);
+        Notification.show("Switched to user: " + selectedUser);
+    }
+
+    private void addUser() {
+        String newUser = addUserField.getValue();
+        if (!newUser.isEmpty() && !users.contains(newUser)) {
+            users.add(newUser);
+            userSelection.setItems(users);
+            addUserField.clear();
+            Notification.show("User added: " + newUser);
+        } else {
+            Notification.show("Please enter a valid and unique user name");
+        }
+    }
+
     public ChatView() {
         addClassNames("chat-view", Width.FULL, Display.FLEX, Flex.AUTO);
         setSpacing(false);
 
-        // UserInfo is used by Collaboration Engine and is used to share details
-        // of users to each other to able collaboration. Replace this with
-        // information about the actual user that is logged, providing a user
-        // identifier, and the user's real name. You can also provide the users
-        // avatar by passing an url to the image as a third parameter, or by
-        // configuring an `ImageProvider` to `avatarGroup`.
-        UserInfo userInfo = new UserInfo(UUID.randomUUID().toString(), "Steve Lange");
+        userInfo = new UserInfo(UUID.randomUUID().toString(), "Ajay");
+        list = new CollaborationMessageList(userInfo, currentChat.getCollaborationTopic());
+
+        list.addClassName("chat-view-message-list-1");
+        list.setSizeFull();
+        newChannelNameInput = new TextField("New Channel Name");
+        createChannelButton = new Button("Create Channel", event -> createNewChannel());
+
+        VerticalLayout newChannelLayout = new VerticalLayout(newChannelNameInput, createChannelButton);
 
         tabs = new Tabs();
         for (ChatInfo chat : chats) {
-            // Listen for new messages in each chat so we can update the
-            // "unread" count
+
             MessageManager mm = new MessageManager(this, userInfo, chat.getCollaborationTopic());
             mm.setMessageHandler(context -> {
                 if (currentChat != chat) {
@@ -117,24 +183,24 @@ public class ChatView extends HorizontalLayout {
         }
         tabs.setOrientation(Orientation.VERTICAL);
         tabs.addClassNames(Flex.GROW, Flex.SHRINK, Overflow.HIDDEN);
-
-        // CollaborationMessageList displays messages that are in a
-        // Collaboration Engine topic. You should give in the user details of
-        // the current user using the component, and a topic Id. Topic id can be
-        // any freeform string. In this template, we have used the format
-        // "chat/#general".
+        userSelection = new ComboBox<>("Select User");
+        userSelection.setItems(users);
+        userSelection.addValueChangeListener(event -> switchUser(event.getValue()));
+        addUserField = new TextField("Add User");
+        Button addUserButton = new Button("Add User", event -> addUser());
+        VerticalLayout newChannelLayout_Button = new VerticalLayout(newChannelNameInput, createChannelButton, userSelection);
+        VerticalLayout userManagementLayout = new VerticalLayout(addUserField, addUserButton);
+        userManagementLayout.setWidth("18rem");
+        userManagementLayout.setVisible(true);
         CollaborationMessageList list = new CollaborationMessageList(userInfo, currentChat.getCollaborationTopic());
+        //<theme-editor-local-classname>
+        list.addClassName("chat-view-message-list-1");
+
+        list.addClassName("chat-view-message-list-1");
         list.setSizeFull();
 
-        // `CollaborationMessageInput is a textfield and button, to be able to
-        // submit new messages. To avoid having to set the same info into both
-        // the message list and message input, the input takes in the list as an
-        // constructor argument to get the information from there.
         CollaborationMessageInput input = new CollaborationMessageInput(list);
         input.setWidthFull();
-
-        // Layouting
-
         VerticalLayout chatContainer = new VerticalLayout();
         chatContainer.addClassNames(Flex.AUTO, Overflow.HIDDEN);
 
@@ -158,8 +224,11 @@ public class ChatView extends HorizontalLayout {
         add(chatContainer, side);
         setSizeFull();
         expand(list);
+        newChannelLayout.setWidth("18rem");
+        newChannelLayout.setVisible(true);
 
-        // Change the topic id of the chat when a new tab is selected
+        side.add(header, tabs, newChannelLayout);
+        side.add(header, tabs, newChannelLayout_Button, userManagementLayout);
         tabs.addSelectedChangeListener(event -> {
             currentChat = ((ChatTab) event.getSelectedTab()).getChatInfo();
             currentChat.resetUnread();

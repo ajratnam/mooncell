@@ -11,6 +11,7 @@ import com.cats.mooncell.views.creditcardform.CreditCardFormView;
 import com.cats.mooncell.views.gridwithfilters.GridwithFiltersView;
 import com.cats.mooncell.views.imagegallery.ImageGalleryView;
 import com.cats.mooncell.views.makeorders.MakeOrdersView;
+import com.cats.mooncell.views.map.MapView;
 import com.cats.mooncell.views.masterdetail.MasterDetailView;
 import com.cats.mooncell.views.myview.MyViewView;
 import com.cats.mooncell.views.personform.PersonFormView;
@@ -121,6 +122,9 @@ public class MainLayout extends AppLayout {
             nav.addItem(
                     new SideNavItem("View Orders", ViewOrdersView.class, LineAwesomeIcon.PIZZA_SLICE_SOLID.create()));
 
+        }
+        if (accessChecker.hasAccess(MapView.class)) {
+            nav.addItem(new SideNavItem("Map", MapView.class, LineAwesomeIcon.MAP.create()));
         }
         if (accessChecker.hasAccess(ConfirmOrderView.class)) {
             nav.addItem(new SideNavItem("Confirm Order", ConfirmOrderView.class,
