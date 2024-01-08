@@ -61,7 +61,6 @@ public class GridwithFiltersView extends Div {
     }
 
     private HorizontalLayout createMobileFilters() {
-        // Mobile version
         HorizontalLayout mobileFilters = new HorizontalLayout();
         mobileFilters.setWidthFull();
         mobileFilters.addClassNames(LumoUtility.Padding.MEDIUM, LumoUtility.BoxSizing.BORDER,

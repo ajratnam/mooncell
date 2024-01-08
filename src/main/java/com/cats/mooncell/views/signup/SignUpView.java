@@ -2,6 +2,8 @@ package com.cats.mooncell.views.signup;
 
 import com.cats.mooncell.data.User;
 import com.cats.mooncell.data.UserRepository; // import UserRepository from com.cats.mooncell.data
+import com.cats.mooncell.data.UserRole;
+import com.cats.mooncell.data.UserRoleRepository;
 import com.cats.mooncell.security.AuthenticatedUser;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.login.LoginI18n;
@@ -12,6 +14,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @AnonymousAllowed
@@ -20,11 +23,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SignUpView extends LoginOverlay implements BeforeEnterObserver {
     private final AuthenticatedUser authenticatedUser;
     private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SignUpView(AuthenticatedUser authenticatedUser, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public SignUpView(AuthenticatedUser authenticatedUser, UserRepository userRepository, UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder) {
         this.authenticatedUser = authenticatedUser;
         this.userRepository = userRepository;
+        this.userRoleRepository = userRoleRepository;
         this.passwordEncoder = passwordEncoder;
 
         LoginI18n i18n = LoginI18n.createDefault();
@@ -62,9 +67,15 @@ public class SignUpView extends LoginOverlay implements BeforeEnterObserver {
                 setEnabled(true);
             } catch (Exception e) {
                 User user = new User();
+                user.setName(StringUtils.capitalize(username));
                 user.setUsername(username);
                 user.setHashedPassword(passwordEncoder.encode(password));
                 userRepository.save(user);
+
+                UserRole userRole = new UserRole();
+                userRole.setUser(user);
+                userRole.setRole("USER");
+                userRoleRepository.save(userRole);
 
                 Notification.show("User created successfully");
                 UI.getCurrent().navigate("login");
