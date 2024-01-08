@@ -103,23 +103,13 @@ public class PersonFormView extends Composite<VerticalLayout> {
 
 //      after submitting the user table should get updated with the data of the new user
         save.addClickListener(event -> {
-            binder.readBean(this.authenticatedUser.getUser());
-            User a = new User();
-            binder.readBean(a);
-
-            String add = a.getAddress();
-            String city = a.getCity();
-            String country = a.getCountry();
-            String email = a.getEmail();
-            String name = a.getName();
-            String phone = a.getPhone();
-            String postalCode = a.getPostalCode();
-            String state = a.getState();
-            String username = a.getUsername();
-            String role = a.getRole();
-            String birthday = a.getBirthday().toString();
-
-
+            try {
+                User user = authenticatedUser.getUser();
+                binder.writeBean(user);
+                userRepository.save(user);
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 
@@ -222,7 +212,7 @@ public class PersonFormView extends Composite<VerticalLayout> {
         stateSelect.setItems(states);
         stateSelect.setVisible(false);
         countrySelect.setItems(countries);
-        countrySelect.addValueChangeListener(e -> stateSelect.setVisible(countrySelect.getValue().equals("United States")));
+//        countrySelect.addValueChangeListener(e -> stateSelect.setVisible(countrySelect.getValue().equals("United States")));
 
 
         // Shipping details section organized into two columns
