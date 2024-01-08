@@ -113,6 +113,8 @@ public class PersonFormView extends Composite<VerticalLayout> {
                 throw new RuntimeException(e);
             }
         });
+
+        binder.readBean(authenticatedUser.getUser());
     }
 
     private Section createPersonalDetailsSection() {
