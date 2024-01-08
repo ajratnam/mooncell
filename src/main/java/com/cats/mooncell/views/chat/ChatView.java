@@ -2,6 +2,8 @@ package com.cats.mooncell.views.chat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cats.mooncell.data.User;
+import com.cats.mooncell.security.AuthenticatedUser;
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.collaborationengine.CollaborationAvatarGroup;
 import com.vaadin.collaborationengine.CollaborationMessageInput;
@@ -46,10 +48,9 @@ public class ChatView extends HorizontalLayout {
     private TextField newChannelNameInput;
     private Button createChannelButton;
     private CollaborationMessageList list;
-    private ComboBox<String> userSelection;
-    private TextField addUserField;
-    private List<String> users = new ArrayList<>();
     private UserInfo userInfo;
+
+    private final AuthenticatedUser authenticatedUser;
 
 
     public static class ChatTab extends Tab {
@@ -137,29 +138,15 @@ public class ChatView extends HorizontalLayout {
         }
     }
 
-    private void switchUser(String selectedUser) {
-
-        userInfo = new UserInfo(UUID.randomUUID().toString(), selectedUser);
-        Notification.show("Switched to user: " + selectedUser);
-    }
-
-    private void addUser() {
-        String newUser = addUserField.getValue();
-        if (!newUser.isEmpty() && !users.contains(newUser)) {
-            users.add(newUser);
-            userSelection.setItems(users);
-            addUserField.clear();
-            Notification.show("User added: " + newUser);
-        } else {
-            Notification.show("Please enter a valid and unique user name");
-        }
-    }
-
-    public ChatView() {
+    public ChatView(AuthenticatedUser authenticatedUser) {
         addClassNames("chat-view", Width.FULL, Display.FLEX, Flex.AUTO);
         setSpacing(false);
 
-        userInfo = new UserInfo(UUID.randomUUID().toString(), "Ajay");
+        this.authenticatedUser = authenticatedUser;
+
+        User user = authenticatedUser.getUser();
+
+        userInfo = new UserInfo(user.getId().toString(), user.getName());
         list = new CollaborationMessageList(userInfo, currentChat.getCollaborationTopic());
 
         list.addClassName("chat-view-message-list-1");
@@ -183,15 +170,6 @@ public class ChatView extends HorizontalLayout {
         }
         tabs.setOrientation(Orientation.VERTICAL);
         tabs.addClassNames(Flex.GROW, Flex.SHRINK, Overflow.HIDDEN);
-        userSelection = new ComboBox<>("Select User");
-        userSelection.setItems(users);
-        userSelection.addValueChangeListener(event -> switchUser(event.getValue()));
-        addUserField = new TextField("Add User");
-        Button addUserButton = new Button("Add User", event -> addUser());
-        VerticalLayout newChannelLayout_Button = new VerticalLayout(newChannelNameInput, createChannelButton, userSelection);
-        VerticalLayout userManagementLayout = new VerticalLayout(addUserField, addUserButton);
-        userManagementLayout.setWidth("18rem");
-        userManagementLayout.setVisible(true);
         CollaborationMessageList list = new CollaborationMessageList(userInfo, currentChat.getCollaborationTopic());
         //<theme-editor-local-classname>
         list.addClassName("chat-view-message-list-1");
@@ -228,7 +206,6 @@ public class ChatView extends HorizontalLayout {
         newChannelLayout.setVisible(true);
 
         side.add(header, tabs, newChannelLayout);
-        side.add(header, tabs, newChannelLayout_Button, userManagementLayout);
         tabs.addSelectedChangeListener(event -> {
             currentChat = ((ChatTab) event.getSelectedTab()).getChatInfo();
             currentChat.resetUnread();
