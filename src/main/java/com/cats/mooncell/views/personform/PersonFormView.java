@@ -107,7 +107,9 @@ public class PersonFormView extends Composite<VerticalLayout> {
                 User user = authenticatedUser.getUser();
                 binder.writeBean(user);
                 userRepository.save(user);
+                Notification.show("Saved successfully");
             } catch (ValidationException e) {
+                Notification.show("Please fill in all fields");
                 throw new RuntimeException(e);
             }
         });
