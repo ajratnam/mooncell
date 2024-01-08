@@ -3,7 +3,6 @@ package com.cats.mooncell.views;
 import com.cats.mooncell.data.User;
 import com.cats.mooncell.security.AuthenticatedUser;
 import com.cats.mooncell.views.about.AboutView;
-import com.cats.mooncell.views.addressform.AddressFormView;
 import com.cats.mooncell.views.chat.ChatView;
 import com.cats.mooncell.views.checkoutform.CheckoutFormView;
 import com.cats.mooncell.views.confirmorder.ConfirmOrderView;
@@ -131,15 +130,6 @@ public class MainLayout extends AppLayout {
                     LineAwesomeIcon.MONEY_BILL_WAVE_SOLID.create()));
 
         }
-        if (accessChecker.hasAccess(AddressFormView.class)) {
-            nav.addItem(
-                    new SideNavItem("Address Form", AddressFormView.class, LineAwesomeIcon.MAP_MARKER_SOLID.create()));
-
-        }
-        if (accessChecker.hasAccess(PersonFormView.class)) {
-            nav.addItem(new SideNavItem("Person Form", PersonFormView.class, LineAwesomeIcon.USER.create()));
-
-        }
         if (accessChecker.hasAccess(MasterDetailView.class)) {
             nav.addItem(
                     new SideNavItem("Master-Detail", MasterDetailView.class, LineAwesomeIcon.COLUMNS_SOLID.create()));
@@ -181,6 +171,9 @@ public class MainLayout extends AppLayout {
             userName.add(div);
             userName.getSubMenu().addItem("Sign out", e -> {
                 authenticatedUser.logout();
+            });
+            userName.getSubMenu().addItem("Edit Profile", e -> {
+                getUI().ifPresent(ui -> ui.navigate("profile"));
             });
 
             layout.add(userMenu);

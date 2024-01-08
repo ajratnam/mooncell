@@ -42,7 +42,7 @@ import java.util.Set;
 
 
 @PageTitle("Registration Form")
-@Route(value = "registration-form", layout = MainLayout.class)
+@Route(value = "profile", layout = MainLayout.class)
 @PermitAll
 @Uses(Icon.class)
 public class PersonFormView extends Composite<VerticalLayout> {
@@ -162,25 +162,18 @@ public class PersonFormView extends Composite<VerticalLayout> {
         datePicker.setRequiredIndicatorVisible(true);
         datePicker.setWidth("50%"); // Set width to 100%
         datePicker.getElement().getThemeList().add("align-center");
-        ComboBox<String> roleSelect = new ComboBox<>("Role");
-        roleSelect.setRequiredIndicatorVisible(true);
-        roleSelect.getElement().getThemeList().add("align-center");
-        roleSelect.setItems("Admin", "User");
-        roleSelect.setVisible(true);
-        roleSelect.setMaxWidth("50%");
 
         // Personal details section organized into two columns
         Div personalDetailsDiv = new Div();
         personalDetailsDiv.addClassNames(LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN, Gap.MEDIUM);
         personalDetailsDiv.add(name, email, phone);
-        personalDetails.add(header, personalDetailsDiv, datePicker, roleSelect);
+        personalDetails.add(header, personalDetailsDiv, datePicker);
 
 
         binder.forField(name).bind(User::getName, User::setName);
         binder.forField(email).bind(User::getEmail, User::setEmail);
         binder.forField(phone).bind(User::getPhone, User::setPhone);
         binder.forField(datePicker).bind(User::getBirthday, User::setBirthday);
-        binder.forField(roleSelect).bind(User::getRole, User::setRole);
 
         return personalDetails;
     }
