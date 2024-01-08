@@ -11,5 +11,11 @@ import jakarta.persistence.Version;
 @Entity
 @Table(name = "items")
 public class Item extends AbstractEntity{
+    String name;
+    String description;
+    @Column(name = "sell_price")
+    double sellPrice;
+    @Column(name = "buy_price")
+    double buyPrice;
 
 }
