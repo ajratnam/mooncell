@@ -2,6 +2,7 @@ package com.cats.mooncell.views.personform;
 
 import com.cats.mooncell.data.User;
 import com.cats.mooncell.data.UserRepository;
+import com.cats.mooncell.data.UserRole;
 import com.cats.mooncell.security.AuthenticatedUser;
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
@@ -33,6 +34,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.cats.mooncell.data.UserRoleRepository;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -58,6 +60,8 @@ public class PersonFormView extends Composite<VerticalLayout> {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserRoleRepository userRoleRepository;
     private final AuthenticatedUser authenticatedUser;
     public PersonFormView(AuthenticatedUser authenticatedUser) {
         this.authenticatedUser = authenticatedUser;
@@ -106,7 +110,14 @@ public class PersonFormView extends Composite<VerticalLayout> {
             try {
                 User user = authenticatedUser.getUser();
                 binder.writeBean(user);
+                var role = user.getRole();
+                UserRole userRole = new UserRole();
+                userRole.setUser(user);
+                userRole.setRole(role);
+
+
                 userRepository.save(user);
+                userRoleRepository.save(userRole);
                 Notification.show("Saved successfully");
             } catch (ValidationException e) {
                 Notification.show("Please fill in all fields");
@@ -153,6 +164,7 @@ public class PersonFormView extends Composite<VerticalLayout> {
         datePicker.getElement().getThemeList().add("align-center");
         ComboBox<String> roleSelect = new ComboBox<>("Role");
         roleSelect.setRequiredIndicatorVisible(true);
+        roleSelect.getElement().getThemeList().add("align-center");
         roleSelect.setItems("Admin", "User");
         roleSelect.setVisible(true);
         roleSelect.setMaxWidth("50%");
