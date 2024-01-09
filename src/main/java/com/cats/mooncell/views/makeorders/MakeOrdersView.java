@@ -34,6 +34,7 @@ import java.util.List;
 @Uses(Icon.class)
 public class MakeOrdersView extends Composite<VerticalLayout> {
 
+    private final AuthenticatedUser authenticatedUser;
     Binder<Order> binder = new Binder<>(Order.class);
     Binder<CurrentOrder> currentBinder = new Binder<>(CurrentOrder.class);
     @Autowired
@@ -42,7 +43,6 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
     private OrderRepository orderRepository;
     @Autowired
     private CurrentOrderRepository currentOrderRepository;
-    private final AuthenticatedUser authenticatedUser;
 
     public MakeOrdersView(ItemRepository itemRepository, OrderRepository orderRepository, CurrentOrderRepository currentOrderRepository, AuthenticatedUser authenticatedUser) {
         this.itemRepository = itemRepository;
@@ -97,11 +97,20 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
             CurrentOrder currentOrder = new CurrentOrder();
             try {
                 binder.writeBean(order);
+                double units = order.getUnits();
                 order.setCost(order.getUnits() * itemRepository.findByName(order.getItemName()).getSellPrice());
                 order.setCustomerName(authenticatedUser.getUser().getName());
                 order.setWarehouseCode(itemRepository.findByName(order.getItemName()).getWarehouseCode());
-                orderRepository.save(order);
 
+
+                Item temp = itemRepository.findByName(order.getItemName());
+                temp.setQuantity_left(temp.getQuantity_left() - units);
+                if (temp.getQuantity_left() < 0) {
+                    throw new RuntimeException("Not enough items in stock");
+                } else {
+                    orderRepository.save(order);
+                    itemRepository.save(temp);
+                }
                 currentBinder.writeBean(currentOrder);
                 currentOrder.setCost(currentOrder.getUnits() * itemRepository.findByName(currentOrder.getItemName()).getSellPrice());
                 currentOrder.setCustomerName(authenticatedUser.getUser().getName());
@@ -142,11 +151,11 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         comboBox.setItemLabelGenerator(Object::toString);
 
         binder.forField(comboBox).bind(Order::getItemName, Order::setItemName);
-        binder.forField( numberField).bind(Order::getUnits ,Order::setUnits);
+        binder.forField(numberField).bind(Order::getUnits, Order::setUnits);
         binder.forField(datePicker).bind(Order::getDate, Order::setDate);
 
         currentBinder.forField(comboBox).bind(CurrentOrder::getItemName, CurrentOrder::setItemName);
-        currentBinder.forField( numberField).bind(CurrentOrder::getUnits ,CurrentOrder::setUnits);
+        currentBinder.forField(numberField).bind(CurrentOrder::getUnits, CurrentOrder::setUnits);
         currentBinder.forField(datePicker).bind(CurrentOrder::getDate, CurrentOrder::setDate);
 
         List<CurrentOrder> orders = currentOrderRepository.findByUserName(authenticatedUser.getUser().getName());
