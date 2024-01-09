@@ -1,8 +1,8 @@
 package com.cats.mooncell.views.makeorders;
 
+import com.cats.mooncell.data.Item;
 import com.cats.mooncell.data.ItemRepository;
 import com.cats.mooncell.data.SamplePerson;
-import com.cats.mooncell.services.SamplePersonService;
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
@@ -19,16 +19,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @PageTitle("Make Orders")
@@ -37,12 +34,20 @@ import java.util.List;
 @Uses(Icon.class)
 public class MakeOrdersView extends Composite<VerticalLayout> {
 
+    Binder<Item> binder = new Binder<>(Item.class);
     @Autowired
     private ItemRepository itemRepository;
-    public MakeOrdersView() {
+
+    public MakeOrdersView(ItemRepository itemRepository) {
+        this.itemRepository = itemRepository;
+
+
+    }
+
+    private void setComboBoxSampleData() {
         H1 h1 = new H1();
         HorizontalLayout layoutRow = new HorizontalLayout();
-        ComboBox comboBox = new ComboBox();
+        ComboBox<String> comboBox = new ComboBox();
         NumberField numberField = new NumberField();
         DatePicker datePicker = new DatePicker();
         VerticalLayout layoutColumn2 = new VerticalLayout();
@@ -64,7 +69,7 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         comboBox.setLabel("Select Items");
         layoutRow.setAlignSelf(Alignment.CENTER, comboBox);
         comboBox.setWidth("400px");
-        setComboBoxSampleData(comboBox);
+//        setComboBoxSampleData(comboBox);
         numberField.setLabel("Quantity");
         layoutRow.setAlignSelf(Alignment.CENTER, numberField);
         numberField.setWidth("min-content");
@@ -83,14 +88,14 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         buttonPrimary.setWidth("min-content");
         buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonSecondary.setText("Onto Payment");
-        buttonSecondary.addClickListener(event ->{
+        buttonSecondary.addClickListener(event -> {
             getUI().ifPresent(ui -> ui.navigate("confirm-order"));
         });
         layoutColumn2.setAlignSelf(Alignment.CENTER, buttonSecondary);
         buttonSecondary.setWidth("min-content");
         basicGrid.setWidth("100%");
         basicGrid.getStyle().set("flex-grow", "0");
-        setGridSampleData(basicGrid);
+//        setGridSampleData(basicGrid);
         getContent().add(h1);
         getContent().add(layoutRow);
         layoutRow.add(comboBox);
@@ -101,24 +106,20 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         layoutColumn2.add(buttonPrimary);
         layoutColumn2.add(buttonSecondary);
         getContent().add(basicGrid);
+
+        List<String> items = itemRepository.findAllByNameIsNotNull();
+        comboBox.setItems(items);
+        comboBox.setItemLabelGenerator(Object::toString);
+
+        binder.forField(comboBox).bind(Item::getName, Item::setName);
+        binder.forField( numberField).bind(Item::getQuantity_left,Item::setQuantity_left);
+//        binder.forField(datePicker)
     }
 
     record SampleItem(String value, String label, Boolean disabled) {
     }
 
-    private void setComboBoxSampleData(ComboBox comboBox) {
 
-        List<String> items = itemRepository.findAllByNameIsNotNull();
-        comboBox.setItems(items);
-        comboBox.setItemLabelGenerator(Object::toString);
-    }
-
-    private void setGridSampleData(Grid grid) {
-        grid.setItems(query -> samplePersonService.list(
-                        PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
-                .stream());
-    }
-
-    @Autowired()
-    private SamplePersonService samplePersonService;
+//    @Autowired()
+//    private ItemService samplePersonService;
 }

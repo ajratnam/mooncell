@@ -11,6 +11,46 @@ import jakarta.persistence.Version;
 @Entity
 @Table(name = "items")
 public class Item extends AbstractEntity{
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getSellPrice() {
+        return sellPrice;
+    }
+
+    public void setSellPrice(double sellPrice) {
+        this.sellPrice = sellPrice;
+    }
+
+    public double getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(double buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
+    public double getQuantity_left() {
+        return quantity_left;
+    }
+
+    public void setQuantity_left(double quantity_left) {
+        this.quantity_left = quantity_left;
+    }
+
     String name;
     String description;
     @Column(name = "sell_price")
@@ -18,5 +58,6 @@ public class Item extends AbstractEntity{
     @Column(name = "buy_price")
     double buyPrice;
     @Column(name = "quantity_left")
-    long quantity_left;
+    double quantity_left;
+
 }
