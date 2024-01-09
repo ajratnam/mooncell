@@ -35,15 +35,19 @@ import java.util.List;
 public class MakeOrdersView extends Composite<VerticalLayout> {
 
     Binder<Order> binder = new Binder<>(Order.class);
+    Binder<CurrentOrder> currentBinder = new Binder<>(CurrentOrder.class);
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private CurrentOrderRepository currentOrderRepository;
     private final AuthenticatedUser authenticatedUser;
 
-    public MakeOrdersView(ItemRepository itemRepository, OrderRepository orderRepository, AuthenticatedUser authenticatedUser) {
+    public MakeOrdersView(ItemRepository itemRepository, OrderRepository orderRepository, CurrentOrderRepository currentOrderRepository, AuthenticatedUser authenticatedUser) {
         this.itemRepository = itemRepository;
         this.orderRepository = orderRepository;
+        this.currentOrderRepository = currentOrderRepository;
         this.authenticatedUser = authenticatedUser;
         setComboBoxSampleData();
     }
@@ -58,7 +62,7 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         ProgressBar progressBar = new ProgressBar();
         Button buttonPrimary = new Button();
         Button buttonSecondary = new Button();
-        Grid basicGrid = new Grid(Order.class);
+        Grid basicGrid = new Grid(CurrentOrder.class);
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
         h1.setText("Place your Order :)");
@@ -90,13 +94,21 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         buttonPrimary.setText("Place Order");
         buttonPrimary.addClickListener(event -> {
             Order order = new Order();
+            CurrentOrder currentOrder = new CurrentOrder();
             try {
                 binder.writeBean(order);
                 order.setCost(order.getUnits() * itemRepository.findByName(order.getItemName()).getSellPrice());
                 order.setCustomerName(authenticatedUser.getUser().getName());
                 order.setWarehouseCode(itemRepository.findByName(order.getItemName()).getWarehouseCode());
-                orderRepository.save(order);
-                List<Order> orders = orderRepository.findAll();
+//                orderRepository.save(order);
+
+                currentBinder.writeBean(currentOrder);
+                currentOrder.setCost(currentOrder.getUnits() * itemRepository.findByName(currentOrder.getItemName()).getSellPrice());
+                currentOrder.setCustomerName(authenticatedUser.getUser().getName());
+                currentOrder.setWarehouseCode(itemRepository.findByName(currentOrder.getItemName()).getWarehouseCode());
+                currentOrderRepository.save(currentOrder);
+
+                List<CurrentOrder> orders = currentOrderRepository.findByUserName(authenticatedUser.getUser().getName());
                 basicGrid.setItems(orders);
             } catch (ValidationException e) {
                 throw new RuntimeException(e);
@@ -133,7 +145,11 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         binder.forField( numberField).bind(Order::getUnits ,Order::setUnits);
         binder.forField(datePicker).bind(Order::getDate, Order::setDate);
 
-        List<Order> orders = orderRepository.findAll();
+        currentBinder.forField(comboBox).bind(CurrentOrder::getItemName, CurrentOrder::setItemName);
+        currentBinder.forField( numberField).bind(CurrentOrder::getUnits ,CurrentOrder::setUnits);
+        currentBinder.forField(datePicker).bind(CurrentOrder::getDate, CurrentOrder::setDate);
+
+        List<CurrentOrder> orders = currentOrderRepository.findByUserName(authenticatedUser.getUser().getName());
         basicGrid.setItems(orders);
     }
 

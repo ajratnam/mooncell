@@ -1,6 +1,10 @@
 package com.cats.mooncell.views.confirmorder;
 
+import com.cats.mooncell.data.CurrentOrder;
+import com.cats.mooncell.data.CurrentOrderRepository;
 import com.cats.mooncell.data.SamplePerson;
+import com.cats.mooncell.security.AuthenticatedUser;
+import com.cats.mooncell.services.CurrentOrderService;
 import com.cats.mooncell.services.SamplePersonService;
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.flow.component.Composite;
@@ -25,6 +29,8 @@ import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
+
 @PageTitle("Confirm Order")
 @Route(value = "confirm-order", layout = MainLayout.class)
 @RolesAllowed("USER")
@@ -32,8 +38,14 @@ import org.springframework.data.domain.PageRequest;
 
 public class ConfirmOrderView extends Composite<VerticalLayout> {
 
-    public ConfirmOrderView() {
-        Grid minimalistGrid = new Grid(SamplePerson.class);
+    @Autowired
+    private CurrentOrderRepository currentOrderRepository;
+    private final AuthenticatedUser authenticatedUser;
+
+    public ConfirmOrderView(CurrentOrderRepository currentOrderRepository, AuthenticatedUser authenticatedUser) {
+        this.authenticatedUser = authenticatedUser;
+        this.currentOrderRepository = currentOrderRepository;
+        Grid minimalistGrid = new Grid(CurrentOrder.class);
         HorizontalLayout layoutRow = new HorizontalLayout();
         ProgressBar progressBar = new ProgressBar();
         Button buttonPrimary = new Button();
@@ -87,11 +99,7 @@ public class ConfirmOrderView extends Composite<VerticalLayout> {
     }
 
     private void setGridSampleData(Grid grid) {
-        grid.setItems(query -> samplePersonService.list(
-                        PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
-                .stream());
+        List<CurrentOrder> orders = currentOrderRepository.findByUserName(authenticatedUser.getUser().getName());
+        grid.setItems(orders);
     }
-
-    @Autowired()
-    private SamplePersonService samplePersonService;
 }

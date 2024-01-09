@@ -1,6 +1,8 @@
 package com.cats.mooncell.views.vieworders;
 
+import com.cats.mooncell.data.Order;
 import com.cats.mooncell.data.SamplePerson;
+import com.cats.mooncell.services.OrderService;
 import com.cats.mooncell.services.SamplePersonService;
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.flow.component.Composite;
@@ -20,14 +22,14 @@ import org.springframework.data.domain.PageRequest;
 
 @PageTitle("View Orders")
 @Route(value = "view-order", layout = MainLayout.class)
-@RolesAllowed("USER")
+@RolesAllowed("ADMIN")
 @Uses(Icon.class)
 public class ViewOrdersView extends Composite<VerticalLayout> {
 
     public ViewOrdersView() {
         HorizontalLayout layoutRow = new HorizontalLayout();
         VerticalLayout layoutColumn2 = new VerticalLayout();
-        Grid minimalistGrid = new Grid(SamplePerson.class);
+        Grid minimalistGrid = new Grid(Order.class);
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
         layoutRow.addClassName(Gap.MEDIUM);
@@ -46,11 +48,11 @@ public class ViewOrdersView extends Composite<VerticalLayout> {
     }
 
     private void setGridSampleData(Grid grid) {
-        grid.setItems(query -> samplePersonService.list(
+        grid.setItems(query -> orderService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
     }
 
     @Autowired()
-    private SamplePersonService samplePersonService;
+    private OrderService orderService;
 }

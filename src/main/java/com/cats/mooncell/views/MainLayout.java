@@ -8,7 +8,6 @@ import com.cats.mooncell.views.checkoutform.CheckoutFormView;
 import com.cats.mooncell.views.confirmorder.ConfirmOrderView;
 import com.cats.mooncell.views.creditcardform.CreditCardFormView;
 import com.cats.mooncell.views.dashboard.DashboardView;
-import com.cats.mooncell.views.datagrid.DataGridView;
 import com.cats.mooncell.views.gridwithfilters.GridwithFiltersView;
 import com.cats.mooncell.views.imagegallery.ImageGalleryView;
 import com.cats.mooncell.views.makeorders.MakeOrdersView;
@@ -100,9 +99,6 @@ public class MainLayout extends AppLayout {
         if (accessChecker.hasAccess(CheckoutFormView.class)) {
             nav.addItem(new SideNavItem("Checkout Form", CheckoutFormView.class, LineAwesomeIcon.CREDIT_CARD.create()));
 
-        }
-        if (accessChecker.hasAccess(DataGridView.class)) {
-            nav.addItem(new SideNavItem("Data Grid", DataGridView.class, LineAwesomeIcon.TH_SOLID.create()));
         }
         if (accessChecker.hasAccess(DashboardView.class)) {
             nav.addItem(new SideNavItem("Dashboard", DashboardView.class, LineAwesomeIcon.CHART_AREA_SOLID.create()));

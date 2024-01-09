@@ -1,5 +1,7 @@
 package com.cats.mooncell.views.checkoutform;
 
+import com.cats.mooncell.data.CurrentOrderRepository;
+import com.cats.mooncell.security.AuthenticatedUser;
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -34,6 +36,8 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import com.vaadin.flow.theme.lumo.LumoUtility.Position;
 import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -45,6 +49,10 @@ public class CheckoutFormView extends Div {
 
     private static final Set<String> states = new LinkedHashSet<>();
     private static final Set<String> countries = new LinkedHashSet<>();
+
+    @Autowired
+    private CurrentOrderRepository currentOrderRepository;
+    private final AuthenticatedUser authenticatedUser;
 
     static {
         states.addAll(Arrays.asList("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
@@ -92,7 +100,9 @@ public class CheckoutFormView extends Div {
                 "Zimbabwe"));
     }
 
-    public CheckoutFormView() {
+    public CheckoutFormView(CurrentOrderRepository currentOrderRepository, AuthenticatedUser authenticatedUser) {
+        this.authenticatedUser = authenticatedUser;
+        this.currentOrderRepository = currentOrderRepository;
         addClassNames("checkout-form-view");
         addClassNames(Display.FLEX, FlexDirection.COLUMN, Height.FULL);
 
@@ -264,6 +274,7 @@ public class CheckoutFormView extends Div {
         Button cancel = new Button("Cancel order");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         cancel.addClickListener( event ->{
+            currentOrderRepository.deleteByCustomerName(authenticatedUser.getUser().getName());
             getUI().ifPresent(ui -> ui.navigate("make-order"));
         });
         Button pay = new Button("Pay securely", new Icon(VaadinIcon.LOCK));
