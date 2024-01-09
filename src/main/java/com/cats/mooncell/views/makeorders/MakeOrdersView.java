@@ -1,5 +1,6 @@
 package com.cats.mooncell.views.makeorders;
 
+import com.cats.mooncell.data.ItemRepository;
 import com.cats.mooncell.data.SamplePerson;
 import com.cats.mooncell.services.SamplePersonService;
 import com.cats.mooncell.views.MainLayout;
@@ -36,6 +37,8 @@ import java.util.List;
 @Uses(Icon.class)
 public class MakeOrdersView extends Composite<VerticalLayout> {
 
+    @Autowired
+    private ItemRepository itemRepository;
     public MakeOrdersView() {
         H1 h1 = new H1();
         HorizontalLayout layoutRow = new HorizontalLayout();
@@ -104,13 +107,10 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
     }
 
     private void setComboBoxSampleData(ComboBox comboBox) {
-        List<SampleItem> sampleItems = new ArrayList<>();
-        sampleItems.add(new SampleItem("first", "First", null));
-        sampleItems.add(new SampleItem("second", "Second", null));
-        sampleItems.add(new SampleItem("third", "Third", Boolean.TRUE));
-        sampleItems.add(new SampleItem("fourth", "Fourth", null));
-        comboBox.setItems(sampleItems);
-        comboBox.setItemLabelGenerator(item -> ((SampleItem) item).label());
+
+        List<String> items = itemRepository.findAllByNameIsNotNull();
+        comboBox.setItems(items);
+        comboBox.setItemLabelGenerator(Object::toString);
     }
 
     private void setGridSampleData(Grid grid) {

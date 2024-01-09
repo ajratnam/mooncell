@@ -17,5 +17,6 @@ public class Item extends AbstractEntity{
     double sellPrice;
     @Column(name = "buy_price")
     double buyPrice;
-
+    @Column(name = "quantity_left")
+    long quantity_left;
 }
