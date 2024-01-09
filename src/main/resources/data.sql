@@ -2,7 +2,7 @@
 -- Name: application_user; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE application_user (
+CREATE TABLE IF NOT EXISTS application_user (
                                   id bigint NOT NULL,
                                   hashed_password character varying(255),
                                   name character varying(255),
@@ -23,7 +23,7 @@ CREATE TABLE application_user (
 -- Name: customers; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE customers (
+CREATE TABLE IF NOT EXISTS customers (
                            id bigint NOT NULL
 );
 
@@ -35,7 +35,7 @@ CREATE TABLE customers (
 -- Name: items; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE items (
+CREATE TABLE IF NOT EXISTS items (
                        id bigint NOT NULL
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE items (
 -- Name: sample_address; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE sample_address (
+CREATE TABLE IF NOT EXISTS sample_address (
                                 id bigint NOT NULL,
                                 city character varying(255),
                                 country character varying(255),
@@ -56,7 +56,7 @@ CREATE TABLE sample_address (
 -- Name: sample_person; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE sample_person (
+CREATE TABLE IF NOT EXISTS sample_person (
                                id bigint NOT NULL,
                                date_of_birth date,
                                email character varying(255),
@@ -73,7 +73,7 @@ CREATE TABLE sample_person (
 -- Name: user_roles; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE user_roles (
+CREATE TABLE IF NOT EXISTS user_roles (
                             id bigint NOT NULL,
                             roles character varying(255),
                             user_id bigint NOT NULL
@@ -84,7 +84,7 @@ CREATE TABLE user_roles (
 -- Name: warehouse_codes; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE warehouse_codes (
+CREATE TABLE IF NOT EXISTS warehouse_codes (
                                  id bigint NOT NULL,
                                  version integer NOT NULL
 );
@@ -94,7 +94,7 @@ CREATE TABLE warehouse_codes (
 -- Name: warehouses; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE warehouses (
+CREATE TABLE IF NOT EXISTS warehouses (
                             id bigint NOT NULL,
                             version integer NOT NULL,
                             cost double precision NOT NULL,
@@ -837,8 +837,8 @@ INSERT INTO user_roles (id, roles, user_id) VALUES (1405, 'ADMIN', 2);
 -- Data for Name: warehouse_codes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO warehouse_codes (id) VALUES (3403434, 1);
-INSERT INTO warehouse_codes (id) VALUES (3402002, 1);
+INSERT INTO warehouse_codes (id) VALUES (3403434);
+INSERT INTO warehouse_codes (id) VALUES (3402002);
 
 
 --

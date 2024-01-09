@@ -58,14 +58,14 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         layoutRow.setHeight("250px");
         layoutRow.setAlignItems(Alignment.START);
         layoutRow.setJustifyContentMode(JustifyContentMode.CENTER);
-        comboBox.setLabel("Combo Box");
+        comboBox.setLabel("Select Items");
         layoutRow.setAlignSelf(Alignment.CENTER, comboBox);
         comboBox.setWidth("400px");
         setComboBoxSampleData(comboBox);
-        numberField.setLabel("Number field");
+        numberField.setLabel("Quantity");
         layoutRow.setAlignSelf(Alignment.CENTER, numberField);
         numberField.setWidth("min-content");
-        datePicker.setLabel("Date picker");
+        datePicker.setLabel("And you need it by?");
         layoutRow.setAlignSelf(Alignment.CENTER, datePicker);
         datePicker.setWidth("min-content");
         layoutColumn2.setHeightFull();
@@ -74,12 +74,15 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         layoutColumn2.getStyle().set("flex-grow", "1");
         layoutColumn2.setJustifyContentMode(JustifyContentMode.CENTER);
         layoutColumn2.setAlignItems(Alignment.CENTER);
-        progressBar.setValue(0.5);
+        progressBar.setValue(0.33);
         buttonPrimary.setText("Place Order");
         layoutColumn2.setAlignSelf(Alignment.CENTER, buttonPrimary);
         buttonPrimary.setWidth("min-content");
         buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonSecondary.setText("Onto Payment");
+        buttonSecondary.addClickListener(event ->{
+            getUI().ifPresent(ui -> ui.navigate("confirm-order"));
+        });
         layoutColumn2.setAlignSelf(Alignment.CENTER, buttonSecondary);
         buttonSecondary.setWidth("min-content");
         basicGrid.setWidth("100%");
@@ -112,7 +115,7 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
 
     private void setGridSampleData(Grid grid) {
         grid.setItems(query -> samplePersonService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
+                        PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
     }
 

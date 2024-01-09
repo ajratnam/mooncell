@@ -29,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 @Route(value = "confirm-order", layout = MainLayout.class)
 @RolesAllowed("USER")
 @Uses(Icon.class)
+
 public class ConfirmOrderView extends Composite<VerticalLayout> {
 
     public ConfirmOrderView() {
@@ -56,13 +57,19 @@ public class ConfirmOrderView extends Composite<VerticalLayout> {
         layoutRow.getStyle().set("flex-grow", "1");
         layoutRow.setAlignItems(Alignment.CENTER);
         layoutRow.setJustifyContentMode(JustifyContentMode.CENTER);
-        progressBar.setValue(0.5);
+        progressBar.setValue(0.66);
         progressBar.setWidth("195px");
         buttonPrimary.setText("Confirm");
+        buttonPrimary.addClickListener(event -> {
+            getUI().ifPresent(ui -> ui.navigate("checkout-form"));
+        });
         layoutRow.setAlignSelf(Alignment.CENTER, buttonPrimary);
         buttonPrimary.setWidth("min-content");
         buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonPrimary2.setText("Back");
+        buttonPrimary2.addClickListener(event -> {
+            getUI().ifPresent(ui -> ui.navigate("make-order"));
+        });
         layoutRow.setAlignSelf(Alignment.CENTER, buttonPrimary2);
         buttonPrimary2.setWidth("min-content");
         buttonPrimary2.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -81,7 +88,7 @@ public class ConfirmOrderView extends Composite<VerticalLayout> {
 
     private void setGridSampleData(Grid grid) {
         grid.setItems(query -> samplePersonService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
+                        PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
     }
 

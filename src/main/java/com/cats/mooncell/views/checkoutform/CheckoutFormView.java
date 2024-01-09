@@ -101,7 +101,7 @@ public class CheckoutFormView extends Div {
                 Margin.Horizontal.AUTO, Padding.Bottom.LARGE, Padding.Horizontal.LARGE);
 
         content.add(createCheckoutForm());
-        content.add(createAside());
+        // content.add(createAside());
         add(content);
     }
 
@@ -263,7 +263,9 @@ public class CheckoutFormView extends Div {
 
         Button cancel = new Button("Cancel order");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-
+        cancel.addClickListener( event ->{
+            getUI().ifPresent(ui -> ui.navigate("make-order"));
+        });
         Button pay = new Button("Pay securely", new Icon(VaadinIcon.LOCK));
         pay.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
 
@@ -271,29 +273,29 @@ public class CheckoutFormView extends Div {
         return footer;
     }
 
-    private Aside createAside() {
-        Aside aside = new Aside();
-        aside.addClassNames(Background.CONTRAST_5, BoxSizing.BORDER, Padding.LARGE, BorderRadius.LARGE,
-                Position.STICKY);
-        Header headerSection = new Header();
-        headerSection.addClassNames(Display.FLEX, AlignItems.CENTER, JustifyContent.BETWEEN, Margin.Bottom.MEDIUM);
-        H3 header = new H3("Order");
-        header.addClassNames(Margin.NONE);
-        Button edit = new Button("Edit");
-        edit.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-        headerSection.add(header, edit);
+    /*  private Aside createAside() {
+          Aside aside = new Aside();
+          aside.addClassNames(Background.CONTRAST_5, BoxSizing.BORDER, Padding.LARGE, BorderRadius.LARGE,
+                  Position.STICKY);
+          Header headerSection = new Header();
+          headerSection.addClassNames(Display.FLEX, AlignItems.CENTER, JustifyContent.BETWEEN, Margin.Bottom.MEDIUM);
+          H3 header = new H3("Order");
+          header.addClassNames(Margin.NONE);
+          Button edit = new Button("Edit");
+          edit.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+          headerSection.add(header, edit);
 
-        UnorderedList ul = new UnorderedList();
-        ul.addClassNames(ListStyleType.NONE, Margin.NONE, Padding.NONE, Display.FLEX, FlexDirection.COLUMN, Gap.MEDIUM);
+          UnorderedList ul = new UnorderedList();
+          ul.addClassNames(ListStyleType.NONE, Margin.NONE, Padding.NONE, Display.FLEX, FlexDirection.COLUMN, Gap.MEDIUM);
 
-        ul.add(createListItem("Vanilla cracker", "With wholemeal flour", "$7.00"));
-        ul.add(createListItem("Vanilla blueberry cake", "With blueberry jam", "$8.00"));
-        ul.add(createListItem("Vanilla pastry", "With wholemeal flour", "$5.00"));
+          ul.add(createListItem("Vanilla cracker", "With wholemeal flour", "$7.00"));
+          ul.add(createListItem("Vanilla blueberry cake", "With blueberry jam", "$8.00"));
+          ul.add(createListItem("Vanilla pastry", "With wholemeal flour", "$5.00"));
 
-        aside.add(headerSection, ul);
-        return aside;
-    }
-
+          aside.add(headerSection, ul);
+          return aside;
+      }
+  */
     private ListItem createListItem(String primary, String secondary, String price) {
         ListItem item = new ListItem();
         item.addClassNames(Display.FLEX, JustifyContent.BETWEEN);
