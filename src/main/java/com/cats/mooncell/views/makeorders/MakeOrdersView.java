@@ -1,8 +1,7 @@
 package com.cats.mooncell.views.makeorders;
 
-import com.cats.mooncell.data.Item;
-import com.cats.mooncell.data.ItemRepository;
-import com.cats.mooncell.data.SamplePerson;
+import com.cats.mooncell.data.*;
+import com.cats.mooncell.security.AuthenticatedUser;
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
@@ -20,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
@@ -34,14 +34,18 @@ import java.util.List;
 @Uses(Icon.class)
 public class MakeOrdersView extends Composite<VerticalLayout> {
 
-    Binder<Item> binder = new Binder<>(Item.class);
+    Binder<Order> binder = new Binder<>(Order.class);
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+    private final AuthenticatedUser authenticatedUser;
 
-    public MakeOrdersView(ItemRepository itemRepository) {
+    public MakeOrdersView(ItemRepository itemRepository, OrderRepository orderRepository, AuthenticatedUser authenticatedUser) {
         this.itemRepository = itemRepository;
-
-
+        this.orderRepository = orderRepository;
+        this.authenticatedUser = authenticatedUser;
+        setComboBoxSampleData();
     }
 
     private void setComboBoxSampleData() {
@@ -54,7 +58,7 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         ProgressBar progressBar = new ProgressBar();
         Button buttonPrimary = new Button();
         Button buttonSecondary = new Button();
-        Grid basicGrid = new Grid(SamplePerson.class);
+        Grid basicGrid = new Grid(Order.class);
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
         h1.setText("Place your Order :)");
@@ -84,6 +88,20 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         layoutColumn2.setAlignItems(Alignment.CENTER);
         progressBar.setValue(0.33);
         buttonPrimary.setText("Place Order");
+        buttonPrimary.addClickListener(event -> {
+            Order order = new Order();
+            try {
+                binder.writeBean(order);
+                order.setCost(order.getUnits() * itemRepository.findByName(order.getItemName()).getSellPrice());
+                order.setCustomerName(authenticatedUser.getUser().getName());
+                order.setWarehouseCode(itemRepository.findByName(order.getItemName()).getWarehouseCode());
+                orderRepository.save(order);
+                List<Order> orders = orderRepository.findAll();
+                basicGrid.setItems(orders);
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
+        });
         layoutColumn2.setAlignSelf(Alignment.CENTER, buttonPrimary);
         buttonPrimary.setWidth("min-content");
         buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -111,10 +129,14 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
         comboBox.setItems(items);
         comboBox.setItemLabelGenerator(Object::toString);
 
-        binder.forField(comboBox).bind(Item::getName, Item::setName);
-        binder.forField( numberField).bind(Item::getQuantity_left,Item::setQuantity_left);
-//        binder.forField(datePicker)
+        binder.forField(comboBox).bind(Order::getItemName, Order::setItemName);
+        binder.forField( numberField).bind(Order::getUnits ,Order::setUnits);
+        binder.forField(datePicker).bind(Order::getDate, Order::setDate);
+
+        List<Order> orders = orderRepository.findAll();
+        basicGrid.setItems(orders);
     }
+
 
     record SampleItem(String value, String label, Boolean disabled) {
     }
