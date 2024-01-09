@@ -1,7 +1,7 @@
 package com.cats.mooncell.views.signup;
 
 import com.cats.mooncell.data.User;
-import com.cats.mooncell.data.UserRepository; // import UserRepository from com.cats.mooncell.data
+import com.cats.mooncell.data.UserRepository;
 import com.cats.mooncell.data.UserRole;
 import com.cats.mooncell.data.UserRoleRepository;
 import com.cats.mooncell.security.AuthenticatedUser;
@@ -16,6 +16,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AnonymousAllowed
 @PageTitle("Sign Up")
@@ -57,6 +60,12 @@ public class SignUpView extends LoginOverlay implements BeforeEnterObserver {
         String username = event.getUsername();
         String password = event.getPassword();
 
+        if(PasswordValidator.validate(password) == false) {
+            Notification.show("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character");
+            setEnabled(true);
+            return;
+        }
+
         // Validate the input values
         if (username.isEmpty() || password.isEmpty()) {
             Notification.show("Please fill in all fields");
@@ -91,5 +100,53 @@ public class SignUpView extends LoginOverlay implements BeforeEnterObserver {
             setOpened(false);
             event.forwardTo("");
         }
+    }
+}
+
+class PasswordValidator {
+    private static final int MIN_LENGTH = 8;
+
+    private static List<Character> createCharacterList(char start, char end) {
+        List<Character> list = new ArrayList<>();
+        for (char c = start; c <= end; c++) {
+            list.add(c);
+        }
+        return list;
+    }
+
+    private static List<Character> createCharacterList(String characters) {
+        List<Character> list = new ArrayList<>();
+        for (char c : characters.toCharArray()) {
+            list.add(c);
+        }
+        return list;
+    }
+
+    private static boolean containsCharacterFromList(String password, List<Character> characterList) {
+        for (char c : password.toCharArray()) {
+            if (characterList.contains(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean validate(String password) {
+        if (password.length() < MIN_LENGTH) {
+            return false;
+        }
+        if (!containsCharacterFromList(password, createCharacterList('a', 'z'))) {
+            return false;
+        }
+        if (!containsCharacterFromList(password, createCharacterList('A', 'Z'))) {
+            return false;
+        }
+        if (!containsCharacterFromList(password, createCharacterList('0', '9'))) {
+            return false;
+        }
+        if (!containsCharacterFromList(password, createCharacterList("!@#$%^&*()_+"))) {
+            return false;
+        }
+        return true;
     }
 }
