@@ -21,9 +21,9 @@ class WarehouseRepositoryTest {
     private WarehouseRepository warehouseRepository;
     @Test
     void findByWarehouseCodeId() {
-        assertNotNull(warehouseRepository.findByWarehouseCodeId(3403434L));
+        assertNotNull(warehouseRepository.findByWarehouseCodeId(3403434));
         // In the current state, the below assertion will be true as there is no warehouse with id 0
-        Long non_existent_id = 0L;
+        Integer non_existent_id = 0;
         Warehouse[] warehouses = warehouseRepository.findByWarehouseCodeId(non_existent_id);
         assertTrue(warehouses == null || warehouses.length == 0);
     }

@@ -8,6 +8,7 @@ import com.cats.mooncell.views.checkoutform.CheckoutFormView;
 import com.cats.mooncell.views.confirmorder.ConfirmOrderView;
 import com.cats.mooncell.views.dashboard.DashboardView;
 import com.cats.mooncell.views.imagegallery.ImageGalleryView;
+import com.cats.mooncell.views.items.ItemsView;
 import com.cats.mooncell.views.makeorders.MakeOrdersView;
 import com.cats.mooncell.views.map.MapView;
 import com.cats.mooncell.views.personform.PersonFormView;
@@ -81,13 +82,15 @@ public class MainLayout extends AppLayout {
             nav.addItem(new SideNavItem("About", AboutView.class, LineAwesomeIcon.FILE.create()));
 
         }
-//        if (accessChecker.hasAccess(CheckoutFormView.class)) {
-//            nav.addItem(new SideNavItem("Checkout Form", CheckoutFormView.class, LineAwesomeIcon.CREDIT_CARD.create()));
-//
-//        }
+
         if (accessChecker.hasAccess(DashboardView.class)) {
             nav.addItem(new SideNavItem("Dashboard", DashboardView.class, LineAwesomeIcon.CHART_AREA_SOLID.create()));
         }
+
+        if (accessChecker.hasAccess(ItemsView.class)) {
+            nav.addItem(new SideNavItem("Items", ItemsView.class, LineAwesomeIcon.COLUMNS_SOLID.create()));
+        }
+
         if (accessChecker.hasAccess(ImageGalleryView.class)) {
             nav.addItem(
                     new SideNavItem("Hot Deals", ImageGalleryView.class, LineAwesomeIcon.FIRE_SOLID.create()));
@@ -110,11 +113,6 @@ public class MainLayout extends AppLayout {
         if (accessChecker.hasAccess(MapView.class)) {
             nav.addItem(new SideNavItem("Map", MapView.class, LineAwesomeIcon.MAP.create()));
         }
-//        if (accessChecker.hasAccess(ConfirmOrderView.class)) {
-//            nav.addItem(new SideNavItem("Confirm Order", ConfirmOrderView.class,
-//                    LineAwesomeIcon.MONEY_BILL_WAVE_SOLID.create()));
-//
-//        }
         return nav;
     }
 

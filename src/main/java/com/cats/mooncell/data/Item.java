@@ -51,11 +51,11 @@ public class Item extends AbstractEntity{
         this.quantity_left = quantity_left;
     }
 
-    public Long getWarehouseCode() {
+    public Integer getWarehouseCode() {
         return warehouseCode;
     }
 
-    public void setWarehouseCode(Long warehouseCode) {
+    public void setWarehouseCode(Integer warehouseCode) {
         this.warehouseCode = warehouseCode;
     }
 
@@ -68,6 +68,6 @@ public class Item extends AbstractEntity{
     @Column(name = "quantity_left")
     double quantity_left;
     @Column(name = "warehouse_code")
-    Long warehouseCode;
+    Integer warehouseCode;
 
 }

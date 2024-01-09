@@ -2,7 +2,7 @@ package com.cats.mooncell.data;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface WarehouseRepository extends  JpaRepository<Warehouse, Long>, JpaSpecificationExecutor<Warehouse>{
-    public Warehouse[] findByWarehouseCodeId(Long id);
+    public Warehouse[] findByWarehouseCodeId(Integer id);
     public Warehouse[] findByCustomerId(Long id);
     public Warehouse[] findByItemId(Long id);
     public Warehouse[] findByCost(double cost);

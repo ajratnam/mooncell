@@ -18,7 +18,7 @@ public class CurrentOrder extends AbstractEntity {
     @Column(name = "units")
     private double units;
     @Column(name = "warehouse_code")
-    private Long warehouseCode;
+    private Integer warehouseCode;
     @Column(name = "date")
     private LocalDate date;
 
@@ -66,11 +66,11 @@ public class CurrentOrder extends AbstractEntity {
         this.units = units;
     }
 
-    public Long getWarehouseCode() {
+    public Integer getWarehouseCode() {
         return warehouseCode;
     }
 
-    public void setWarehouseCode(Long warehouseCode) {
+    public void setWarehouseCode(Integer warehouseCode) {
         this.warehouseCode = warehouseCode;
     }
 }
