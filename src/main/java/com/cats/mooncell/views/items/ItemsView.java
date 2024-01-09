@@ -1,10 +1,13 @@
 package com.cats.mooncell.views.items;
 
 import com.cats.mooncell.data.Item;
+import com.cats.mooncell.data.User;
+import com.cats.mooncell.security.AuthenticatedUser;
 import com.cats.mooncell.services.ItemService;
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.collaborationengine.CollaborationAvatarGroup;
 import com.vaadin.collaborationengine.CollaborationBinder;
+import com.vaadin.collaborationengine.CollaborationMessageList;
 import com.vaadin.collaborationengine.UserInfo;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -43,13 +46,15 @@ public class ItemsView extends Div implements BeforeEnterObserver {
 
     CollaborationAvatarGroup avatarGroup;
 
+    private TextField name;
+    private TextField description;
     private NumberField sell_price;
     private NumberField buy_price;
     private NumberField quantity_left;
     private IntegerField warehouse_code;
 
     private final Button cancel = new Button("Cancel");
-    private final Button save = new Button("Save");
+    private final Button save = new Button("Add Item");
 
     private final CollaborationBinder<Item> binder;
 
@@ -57,19 +62,17 @@ public class ItemsView extends Div implements BeforeEnterObserver {
 
     private final ItemService itemService;
 
-    public ItemsView(ItemService itemService) {
+    private final AuthenticatedUser authenticatedUser;
+
+    public ItemsView(ItemService itemService, AuthenticatedUser authenticatedUser) {
         this.itemService = itemService;
         addClassNames("items-view");
 
-        // UserInfo is used by Collaboration Engine and is used to share details
-        // of users to each other to able collaboration. Replace this with
-        // information about the actual user that is logged, providing a user
-        // identifier, and the user's real name. You can also provide the users
-        // avatar by passing an url to the image as a third parameter, or by
-        // configuring an `ImageProvider` to `avatarGroup`.
-        UserInfo userInfo = new UserInfo(UUID.randomUUID().toString(), "Steve Lange");
+        this.authenticatedUser = authenticatedUser;
 
-        // Create UI
+        User user = authenticatedUser.getUser();
+        UserInfo userInfo = new UserInfo(user.getId().toString(), user.getName());
+
         SplitLayout splitLayout = new SplitLayout();
 
         avatarGroup = new CollaborationAvatarGroup(userInfo, null);
@@ -80,7 +83,8 @@ public class ItemsView extends Div implements BeforeEnterObserver {
 
         add(splitLayout);
 
-        // Configure Grid
+        grid.addColumn("name").setAutoWidth(true);
+        grid.addColumn("description").setAutoWidth(true);
         grid.addColumn("sellPrice").setAutoWidth(true);
         grid.addColumn("buyPrice").setAutoWidth(true);
         grid.addColumn("quantity_left").setAutoWidth(true);
@@ -90,7 +94,6 @@ public class ItemsView extends Div implements BeforeEnterObserver {
                 .stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
-        // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
                 UI.getCurrent().navigate(String.format(ITEM_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
@@ -100,10 +103,7 @@ public class ItemsView extends Div implements BeforeEnterObserver {
             }
         });
 
-        // Configure Form
         binder = new CollaborationBinder<>(Item.class, userInfo);
-
-        // Bind fields. This is where you'd define e.g. validation rules
 
         binder.bindInstanceFields(this);
 
@@ -162,11 +162,13 @@ public class ItemsView extends Div implements BeforeEnterObserver {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
+        name = new TextField("Name");
+        description = new TextField("Description");
         sell_price = new NumberField("Sell Price");
         buy_price = new NumberField("Buy Price");
         quantity_left = new NumberField("Quantity Left");
         warehouse_code = new IntegerField("Warehouse Code");
-        formLayout.add(sell_price, buy_price, quantity_left, warehouse_code);
+        formLayout.add(name, description, sell_price, buy_price, quantity_left, warehouse_code);
 
         editorDiv.add(avatarGroup, formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -205,8 +207,10 @@ public class ItemsView extends Div implements BeforeEnterObserver {
         if (this.item != null && this.item.getId() != null) {
             topic = "item/" + this.item.getId();
             avatarGroup.getStyle().set("visibility", "visible");
+            save.setText("Save");
         } else {
             avatarGroup.getStyle().set("visibility", "hidden");
+            save.setText("Add Item");
         }
         binder.setTopic(topic, () -> this.item);
         avatarGroup.setTopic(topic);
