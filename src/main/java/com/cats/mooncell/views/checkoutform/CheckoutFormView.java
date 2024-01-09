@@ -1,6 +1,9 @@
 package com.cats.mooncell.views.checkoutform;
 
 import com.cats.mooncell.data.CurrentOrderRepository;
+import com.cats.mooncell.data.User;
+import com.cats.mooncell.data.UserRepository;
+import com.cats.mooncell.data.UserRole;
 import com.cats.mooncell.security.AuthenticatedUser;
 import com.cats.mooncell.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -16,6 +19,8 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility.AlignItems;
@@ -53,7 +58,10 @@ public class CheckoutFormView extends Div {
 
     @Autowired
     private CurrentOrderRepository currentOrderRepository;
+    @Autowired
+    private UserRepository userRepository;
     private final AuthenticatedUser authenticatedUser;
+    Binder<User> binder = new Binder<>(User.class);
 
     static {
         states.addAll(Arrays.asList("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
@@ -132,6 +140,9 @@ public class CheckoutFormView extends Div {
         checkoutForm.add(new Hr());
         checkoutForm.add(createFooter());
 
+        binder.readBean(authenticatedUser.getUser());
+        binder.readBean(authenticatedUser.getUser());
+
         return checkoutForm;
     }
 
@@ -159,10 +170,15 @@ public class CheckoutFormView extends Div {
         phone.setPattern("[\\d \\-\\+]+");
         phone.addClassNames(Margin.Bottom.SMALL);
 
-        Checkbox rememberDetails = new Checkbox("Remember personal details for next time");
+        Checkbox rememberDetails = new Checkbox("Remember personal details for next time", true);
         rememberDetails.addClassNames(Margin.Top.SMALL);
 
         personalDetails.add(stepOne, header, name, email, phone, rememberDetails);
+
+        binder.forField(name).asRequired("Name is required").bind(User::getName, User::setName);
+        binder.forField(email).asRequired("Email is required").bind(User::getEmail, User::setEmail);
+        binder.forField(phone).asRequired("Phone is required").bind(User::getPhone, User::setPhone);
+
         return personalDetails;
     }
 
@@ -208,13 +224,15 @@ public class CheckoutFormView extends Div {
         countrySelect
                 .addValueChangeListener(e -> stateSelect.setVisible(countrySelect.getValue().equals("United States")));
 
-        Checkbox sameAddress = new Checkbox("Billing address is the same as shipping address");
-        sameAddress.addClassNames(Margin.Top.SMALL);
+        Checkbox rememberAddress = new Checkbox("Remember address for next time", true);
 
-        Checkbox rememberAddress = new Checkbox("Remember address for next time");
-
-        shippingDetails.add(stepTwo, header, countrySelect, address, subSection, stateSelect, sameAddress,
+        shippingDetails.add(stepTwo, header, countrySelect, address, subSection, stateSelect,
                 rememberAddress);
+
+        binder.forField(countrySelect).asRequired("Country is required").bind(User::getCountry, User::setCountry);
+        binder.forField(address).asRequired("Address is required").bind(User::getAddress, User::setAddress);
+        binder.forField(postalCode).asRequired("Postal code is required").bind(User::getPostalCode, User::setPostalCode);
+        binder.forField(city).asRequired("City is required").bind(User::getCity, User::setCity);
         return shippingDetails;
     }
 
@@ -281,6 +299,14 @@ public class CheckoutFormView extends Div {
         Button pay = new Button("Pay securely", new Icon(VaadinIcon.LOCK));
         pay.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         pay.addClickListener(event -> {
+            try {
+                User user = authenticatedUser.getUser();
+                binder.writeBean(user);
+                userRepository.save(user);
+            } catch (ValidationException e) {
+                Notification.show("Please fill in all fields");
+                throw new RuntimeException(e);
+            }
             currentOrderRepository.deleteByCustomerName(authenticatedUser.getUser().getName());
             getUI().ifPresent(ui -> ui.getPage().open("https://paytm.com/", "_blank"));
             getUI().ifPresent(ui -> ui.navigate("make-order"));
