@@ -11,6 +11,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -279,6 +280,12 @@ public class CheckoutFormView extends Div {
         });
         Button pay = new Button("Pay securely", new Icon(VaadinIcon.LOCK));
         pay.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+        pay.addClickListener(event -> {
+            currentOrderRepository.deleteByCustomerName(authenticatedUser.getUser().getName());
+            getUI().ifPresent(ui -> ui.getPage().open("https://paytm.com/", "_blank"));
+            getUI().ifPresent(ui -> ui.navigate("make-order"));
+            Notification.show("Placed order successfully");
+        });
 
         footer.add(cancel, pay);
         return footer;

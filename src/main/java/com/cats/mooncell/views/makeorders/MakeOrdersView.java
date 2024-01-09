@@ -100,7 +100,7 @@ public class MakeOrdersView extends Composite<VerticalLayout> {
                 order.setCost(order.getUnits() * itemRepository.findByName(order.getItemName()).getSellPrice());
                 order.setCustomerName(authenticatedUser.getUser().getName());
                 order.setWarehouseCode(itemRepository.findByName(order.getItemName()).getWarehouseCode());
-//                orderRepository.save(order);
+                orderRepository.save(order);
 
                 currentBinder.writeBean(currentOrder);
                 currentOrder.setCost(currentOrder.getUnits() * itemRepository.findByName(currentOrder.getItemName()).getSellPrice());
