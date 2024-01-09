@@ -238,12 +238,7 @@ public class PersonFormView extends Composite<VerticalLayout> {
     }
 
 
-//private void onSave(ClickEvent e) throws ValidationException {
-//        User user = new User();
-//        binder.writeBean(user);
-//
-//
-//}
+
 }
 
 
