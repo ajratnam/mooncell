@@ -24,29 +24,28 @@ import com.vaadin.flow.theme.lumo.LumoUtility.MaxWidth;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
 
-@PageTitle("Image Gallery")
+@PageTitle("Deals of the day")
 @Route(value = "image-gallery", layout = MainLayout.class)
 @AnonymousAllowed
-public class ImageGalleryView extends Main implements HasComponents, HasStyle {
+public class    ImageGalleryView extends Main implements HasComponents, HasStyle {
 
     private OrderedList imageContainer;
 
     public ImageGalleryView() {
         constructUI();
 
-        imageContainer.add(new ImageGalleryViewCard("Snow mountains under stars",
-                "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"));
-        imageContainer.add(new ImageGalleryViewCard("Snow covered mountain",
-                "https://images.unsplash.com/photo-1512273222628-4daea6e55abb?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"));
-        imageContainer.add(new ImageGalleryViewCard("River between mountains",
-                "https://images.unsplash.com/photo-1536048810607-3dc7f86981cb?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=375&q=80"));
-        imageContainer.add(new ImageGalleryViewCard("Milky way on mountains",
-                "https://images.unsplash.com/photo-1515705576963-95cad62945b6?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=750&q=80"));
-        imageContainer.add(new ImageGalleryViewCard("Mountain with fog",
-                "https://images.unsplash.com/photo-1513147122760-ad1d5bf68cdb?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"));
-        imageContainer.add(new ImageGalleryViewCard("Mountain at night",
-                "https://images.unsplash.com/photo-1562832135-14a35d25edef?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=815&q=80"));
-
+        imageContainer.add(new ImageGalleryViewCard("Power Drill","A versatile power drill with multiple speed settings and various drill bits",
+                "https://th.bing.com/th/id/OIP.i_VIiP82mbkS6hTmpTX1ggHaHa?rs=1&pid=ImgDetMain","Tools"));
+        imageContainer.add(new ImageGalleryViewCard("Circular Saw","Heavy-duty circular saw for precision cutting in woodworking projects",
+                "https://th.bing.com/th/id/OIP.pjsJRfgRbbqEv0HWlfSHHQHaE8?rs=1&pid=ImgDetMain","Tools"));
+        imageContainer.add(new ImageGalleryViewCard("Toolbox Set","Complete set of essential hand tools in a durable and portable toolbox.","https://th.bing.com/th/id/OIP.cpVVY8Izqwq9NpOqYcUedQHaEj?rs=1&pid=ImgDetMain","Tools"));
+        imageContainer.add(new ImageGalleryViewCard("Electric Screwdriver Kit","Compact electric screwdriver with interchangeable bits for quick and easy screwing.",
+                "https://www.pproreviews.com/wp-content/uploads/2021/01/Cordless-Screwdriver.jpg","Tools"));
+        imageContainer.add(new ImageGalleryViewCard("Hammer","High-quality steel hammer with a comfortable grip for various construction tasks",
+                "https://3.imimg.com/data3/YX/VI/MY-3332131/rip-claw-with-smooth-face-hammer-with-large-strikeface-500x500.jpg","Tools"));
+        imageContainer.add(new ImageGalleryViewCard("Notebook coolers"," Cooling Pad comes with a Large Sturdy and Robust design that is suitable for Laptops upto 15.6 inches. The Metal Mesh Design provides added Strength and cooling ability to the laptop and silicon pads ensure a stable grip on the surface","https://m.media-amazon.com/images/I/716LIV7bJfL._SX522_.jpg","Laptop Accessories"));
+        imageContainer.add(new ImageGalleryViewCard("Laptop Backpack","Anti Theft 23 L Backpack with USB Charging Port 15 Inch Laptop Backpack ","https://m.media-amazon.com/images/I/61y5mUKvMdL._SX679_.jpg","Laptop Accessories"));
+        imageContainer.add(new ImageGalleryViewCard("Marshal Speakers","Stanmore II is the most versatile speaker in the Marshall line-up and is perfect for any room, big or small","https://m.media-amazon.com/images/I/71pTGJ3LnDL._SY879_.jpg","Speakers"));
     }
 
     private void constructUI() {
@@ -57,21 +56,18 @@ public class ImageGalleryView extends Main implements HasComponents, HasStyle {
         container.addClassNames(AlignItems.CENTER, JustifyContent.BETWEEN);
 
         VerticalLayout headerContainer = new VerticalLayout();
-        H2 header = new H2("Beautiful photos");
+        H2 header = new H2("Hot deals of the day 🔥🔥🔥");
         header.addClassNames(Margin.Bottom.NONE, Margin.Top.XLARGE, FontSize.XXXLARGE);
-        Paragraph description = new Paragraph("Royalty free photos and pictures, courtesy of Unsplash");
+        Paragraph description = new Paragraph("Order now!!!");
         description.addClassNames(Margin.Bottom.XLARGE, Margin.Top.NONE, TextColor.SECONDARY);
         headerContainer.add(header, description);
 
-        Select<String> sortBy = new Select<>();
-        sortBy.setLabel("Sort by");
-        sortBy.setItems("Popularity", "Newest first", "Oldest first");
-        sortBy.setValue("Popularity");
+
 
         imageContainer = new OrderedList();
         imageContainer.addClassNames(Gap.MEDIUM, Display.GRID, ListStyleType.NONE, Margin.NONE, Padding.NONE);
 
-        container.add(headerContainer, sortBy);
+        container.add(headerContainer);
         add(container, imageContainer);
 
     }
