@@ -1,6 +1,6 @@
 # Mooncell
 
-A robust supply chain management system built using vaddin.
+A robust supply chain management system built using vaadin.
 
 ## Running the application
 
