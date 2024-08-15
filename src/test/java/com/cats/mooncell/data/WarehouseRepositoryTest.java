@@ -27,7 +27,7 @@ class WarehouseRepositoryTest {
         Warehouse[] warehouses = warehouseRepository.findByWarehouseCodeId(non_existent_id);
         assertTrue(warehouses == null || warehouses.length == 0);
     }
-    // I am a moron and I don't know how to write tests and I do not know to spel right either
+
     @Test
     void findByCustomerId() {
         assertNotNull(warehouseRepository.findByCustomerId(5029913L));
@@ -37,8 +37,7 @@ class WarehouseRepositoryTest {
         assertTrue(warehouses == null || warehouses.length == 0);
 
     }
-    // Supply chain management of what exactly? I don't know what I am doing. Coplilot FTW. May god supply knowedge
-    // to the organ I call my brain -  recursion is the key to success
+
 
     @Test
     void findByCost() {
@@ -46,7 +45,7 @@ class WarehouseRepositoryTest {
 
         double non_existent_cost = 0.0;
         Warehouse[] wh = warehouseRepository.findByCost(non_existent_cost);
-        assertEquals(wh.length, 0); // this should work I give up
+        assertEquals(wh.length, 0); 
     }
 
 
@@ -69,11 +68,7 @@ class WarehouseRepositoryTest {
 
     @Test
     void deleteByCustomerId() {
-        // this is a bad test as it deletes data from the database
-        // but I am too lazy to write a test that does not delete data from the database
-        // I am a bad person
-        // First I inserted a row to test it.
-        // that row is gone forever now :(
+
 
         Long customer_id = 5463565L;
         warehouseRepository.deleteByCustomerId(customer_id);
